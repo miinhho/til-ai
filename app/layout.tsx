@@ -24,7 +24,7 @@ export default function RootLayout({ children }: Readonly<PropsWithChildren>) {
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} min-h-screen antialiased`}
       >
         <SWRProvider>{children}</SWRProvider>
         <Toaster />
