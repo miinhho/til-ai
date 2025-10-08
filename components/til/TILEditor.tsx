@@ -6,13 +6,13 @@ import { Input } from "@/components/ui/input";
 import type { TIL } from "@/lib/db/schema";
 import { EditorContent, useEditor } from "@tiptap/react";
 import { Loader2 } from "lucide-react";
-import { useState } from "react";
-import { extensions } from "./editor-config";
+import { useMemo, useState } from "react";
+import { extensions, getJsonFromTipTapHtml } from "./editor-config";
 import "./editor.css";
 
 interface TILEditorProps {
   initialTitle?: string;
-  /** HTML content stored in DB */
+  /** 저장된 HTML 콘텐츠 */
   initialContent?: string;
   onSave?: ({ title, content }: TIL.Create) => void;
   readOnly?: boolean;
@@ -26,10 +26,14 @@ export default function TILEditor({
   readOnly = false,
   isSaving = false,
 }: TILEditorProps) {
+  const jsonContent = useMemo(() => {
+    return getJsonFromTipTapHtml(initialContent || "");
+  }, [initialContent]);
+
   const editor = useEditor(
     {
       extensions,
-      content: initialContent || '""',
+      content: jsonContent,
       editable: !readOnly,
       editorProps: {
         attributes: {
@@ -45,8 +49,8 @@ export default function TILEditor({
 
   const handleSave = async () => {
     if (!editor) return;
-    const content = JSON.stringify(editor.getHTML());
-    onSave?.({ title, content });
+    const htmlContent = editor.getHTML();
+    onSave?.({ title, content: htmlContent });
   };
 
   return (
@@ -68,10 +72,10 @@ export default function TILEditor({
         <Button onClick={handleSave} className="w-full" disabled={isSaving}>
           {isSaving ? (
             <span className="flex items-center justify-center gap-2">
-              <Loader2 className="h-4 w-4 animate-spin" /> 저장 중...
+              <Loader2 className="h-4 w-4 animate-spin" />
             </span>
           ) : (
-            "Save TIL"
+            "TIL 저장"
           )}
         </Button>
       )}

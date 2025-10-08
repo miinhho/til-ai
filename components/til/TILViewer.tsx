@@ -21,6 +21,10 @@ export default function TILViewer({ id }: TILViewerProps) {
 
   useEffect(() => {
     if (!til?.content || !contentRef.current) return;
+    // 서버에서 받아온 HTML 문자열을 실제 HTML로 변환하여 삽입
+    // JSON 으로 저장하는 방법도 있었으나 HTML 로 저장하여 띄우는 것이 무거운 tiptap 에서 렌더링하는 것보다 가볍고 빠름
+    // tiptap 이라는 검증된 솔루션에서 HTML 관련 보안 이슈를 처리해주기 때문에 선택
+    // 단, XSS 공격에 취약할 수 있으므로 신뢰할 수 없는 콘텐츠를 삽입할 때는 주의가 필요
     contentRef.current.innerHTML = til.content;
   }, [til?.content]);
 

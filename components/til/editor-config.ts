@@ -15,10 +15,12 @@ import { TableRow } from "@tiptap/extension-table-row";
 import { TaskItem } from "@tiptap/extension-task-item";
 import { TaskList } from "@tiptap/extension-task-list";
 import { TextStyle } from "@tiptap/extension-text-style";
+import { generateHTML, generateJSON, type JSONContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { createLowlight } from "lowlight";
 
 const lowlight = createLowlight();
+
 export const extensions = [
   StarterKit.configure({
     blockquote: false,
@@ -62,3 +64,11 @@ export const extensions = [
   TableHeader,
   TableCell,
 ];
+
+export const getJsonFromTipTapHtml = (html: string) => {
+  return generateJSON(html, extensions);
+};
+
+export const getHtmlFromTipTapJson = (json: JSONContent) => {
+  return generateHTML(json, extensions);
+};

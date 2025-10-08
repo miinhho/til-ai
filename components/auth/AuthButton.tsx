@@ -2,10 +2,12 @@
 
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function AuthButton() {
   const { data: session, status } = useSession();
+  const router = useRouter();
 
   if (status === "loading") {
     return (
@@ -17,7 +19,7 @@ export default function AuthButton() {
 
   if (!session?.user) {
     return (
-      <Button size="sm" onClick={() => signIn("google")}>
+      <Button size="sm" onClick={() => router.push("/login")}>
         로그인
       </Button>
     );

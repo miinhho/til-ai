@@ -50,7 +50,7 @@ type AuthenticatedRouteHandler = (
   ...args: unknown[]
 ) => Promise<Response> | Response;
 
-export function withAuth(handler: AuthenticatedRouteHandler): RouteHandler {
+export const withAuth = (handler: AuthenticatedRouteHandler): RouteHandler => {
   return async (request, ctx, ...rest) => {
     const session = await auth();
     if (!session?.user?.id) {
@@ -62,4 +62,4 @@ export function withAuth(handler: AuthenticatedRouteHandler): RouteHandler {
 
     return handler(request, session as Session, ctx, ...rest);
   };
-}
+};
