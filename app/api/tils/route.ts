@@ -8,8 +8,8 @@ export interface TILFindListResponse {
   tils: Omit<TIL.Select, "userId">[];
 }
 
-export const GET = withAuth(async (request, session) => {
-  const sortParam = request.nextUrl.searchParams.get("sort") === "oldest";
+export const GET = withAuth(async (req, session) => {
+  const sortParam = req.nextUrl.searchParams.get("sort") === "oldest";
   const orderBy = sortParam
     ? asc(TIL.Table.createdAt)
     : desc(TIL.Table.createdAt);
@@ -32,17 +32,21 @@ export const GET = withAuth(async (request, session) => {
 
 export interface TILCreateResponse extends Omit<TIL.Select, "userId"> {}
 
-export const POST = withAuth(async (request, session) => {
-  const body = await request.json();
+export const POST = withAuth(async (req, session) => {
+  const body = await req.json();
   const parsed = TIL.Schema.Create.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.message }, { status: 400 });
+    return NextResponse.json(
+      { error: "제목이나 내용이 유효하지 않습니다" },
+      { status: 400 },
+    );
   }
 
   const [til] = await db
     .insert(TIL.Table)
     .values({
-      ...parsed.data,
+      title: parsed.data.title,
+      content: parsed.data.content,
       userId: session.user.id,
     })
     .returning({

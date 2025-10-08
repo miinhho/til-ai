@@ -1,7 +1,6 @@
 import { withAuth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { TIL, Users } from "@/lib/db/schema";
-import { getIdParam } from "@/lib/route-utils";
 import { eq } from "drizzle-orm";
 import { type NextRequest, NextResponse } from "next/server";
 
@@ -12,9 +11,13 @@ export interface TILFindByIdResponse extends Omit<TIL.Select, "userId"> {
   };
 }
 
-export const GET = async (request: NextRequest) => {
-  const id = getIdParam(request);
-  if (id === null) {
+export const GET = async (
+  _req: NextRequest,
+  { params }: RouteContext<"/api/tils/[id]">,
+) => {
+  const { id: stringId } = await params;
+  const id = parseInt(stringId, 10);
+  if (Number.isNaN(id)) {
     return NextResponse.json(
       { error: "유효한 Id가 필요합니다" },
       { status: 400 },
@@ -62,34 +65,37 @@ export interface TILDeleteResponse {
   message: string;
 }
 
-export const DELETE = withAuth(async (request, session) => {
-  const id = getIdParam(request);
-  if (id === null) {
-    return NextResponse.json(
-      { error: "유효한 Id가 필요합니다" },
-      { status: 400 },
-    );
-  }
+export const DELETE = withAuth(
+  async (_req, session, { params }: RouteContext<"/api/tils/[id]">) => {
+    const { id: stringId } = await params;
+    const id = parseInt(stringId, 10);
+    if (Number.isNaN(id)) {
+      return NextResponse.json(
+        { error: "유효한 Id가 필요합니다" },
+        { status: 400 },
+      );
+    }
 
-  const [til] = await db
-    .select({ userId: TIL.Table.userId })
-    .from(TIL.Table)
-    .where(eq(TIL.Table.id, id));
+    const [til] = await db
+      .select({ userId: TIL.Table.userId })
+      .from(TIL.Table)
+      .where(eq(TIL.Table.id, id));
 
-  if (!til) {
-    return NextResponse.json(
-      { error: "TIL을 찾을 수 없습니다" },
-      { status: 404 },
-    );
-  }
+    if (!til) {
+      return NextResponse.json(
+        { error: "TIL을 찾을 수 없습니다" },
+        { status: 404 },
+      );
+    }
 
-  if (til.userId !== session.user.id) {
-    return NextResponse.json(
-      { error: "삭제 권한이 없습니다" },
-      { status: 403 },
-    );
-  }
+    if (til.userId !== session.user.id) {
+      return NextResponse.json(
+        { error: "삭제 권한이 없습니다" },
+        { status: 403 },
+      );
+    }
 
-  await db.delete(TIL.Table).where(eq(TIL.Table.id, id));
-  return NextResponse.json({ message: "TIL이 삭제되었습니다" });
-});
+    await db.delete(TIL.Table).where(eq(TIL.Table.id, id));
+    return NextResponse.json({ message: "TIL이 삭제되었습니다" });
+  },
+);

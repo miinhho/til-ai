@@ -37,17 +37,21 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
 type RouteHandler = (
   request: NextRequest,
+  // biome-ignore lint/suspicious/noExplicitAny: AppRouteHandlerRoutes 라는 타입이 필요하나 빌드 시점에 만들어지는 타입이라 any로 둠
+  ctx: RouteContext<any>,
   ...args: unknown[]
 ) => Promise<Response> | Response;
 
 type AuthenticatedRouteHandler = (
   request: NextRequest,
   session: Session,
+  // biome-ignore lint/suspicious/noExplicitAny: AppRouteHandlerRoutes 라는 타입이 필요하나 빌드 시점에 만들어지는 타입이라 any로 둠
+  ctx: RouteContext<any>,
   ...args: unknown[]
 ) => Promise<Response> | Response;
 
 export function withAuth(handler: AuthenticatedRouteHandler): RouteHandler {
-  return async (request, ...rest) => {
+  return async (request, ctx, ...rest) => {
     const session = await auth();
     if (!session?.user?.id) {
       return NextResponse.json(
@@ -56,6 +60,6 @@ export function withAuth(handler: AuthenticatedRouteHandler): RouteHandler {
       );
     }
 
-    return handler(request, session as Session, ...rest);
+    return handler(request, session as Session, ctx, ...rest);
   };
 }

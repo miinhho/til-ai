@@ -5,8 +5,8 @@ import { type NextRequest, NextResponse } from "next/server";
 
 export interface TILSearchResponse extends Array<Omit<TIL.Select, "userId">> {}
 
-export const GET = async (request: NextRequest) => {
-  const searchParams = request.nextUrl.searchParams;
+export const GET = async (req: NextRequest) => {
+  const searchParams = req.nextUrl.searchParams;
   const search = searchParams.get("search")?.trim() ?? "";
   if (search.length <= 2) {
     return NextResponse.json(
