@@ -31,7 +31,7 @@ export default function TILItem({ item, onDelete }: TILItemProps) {
       if (!res.ok) throw new Error("Failed to delete");
       toast.success("TIL deleted successfully!");
       onDelete?.(item.id);
-    } catch (_err) {
+    } catch {
       toast.error("Failed to delete TIL");
     } finally {
       setIsDeleting(false);

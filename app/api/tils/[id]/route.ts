@@ -3,17 +3,15 @@ import { TIL } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { type NextRequest, NextResponse } from "next/server";
 
-interface GETParams {
-  params: { id: string };
-}
-export async function GET(
-  _request: NextRequest,
-  { params: { id } }: GETParams,
-) {
-  const numberId = parseInt(id, 10);
-  if (Number.isNaN(id)) {
-    return NextResponse.json({ error: "유효하지 않은 Id" }, { status: 400 });
+export async function GET(request: NextRequest) {
+  const id = request.nextUrl.searchParams.get("id");
+  if (!id || Number.isNaN(id)) {
+    return NextResponse.json(
+      { error: "유효한 Id가 필요합니다" },
+      { status: 400 },
+    );
   }
+  const numberId = parseInt(id, 10);
 
   const til = await db
     .select()
@@ -30,15 +28,16 @@ export async function GET(
   return NextResponse.json({ data: til[0] });
 }
 
-export async function DELETE(
-  _request: NextRequest,
-  { params }: { params: { id: string } },
-) {
-  const id = parseInt(params.id, 10);
-  if (Number.isNaN(id)) {
-    return NextResponse.json({ error: "유효하지 않은 Id" }, { status: 400 });
+export async function DELETE(request: NextRequest) {
+  const id = request.nextUrl.searchParams.get("id");
+  if (!id || Number.isNaN(id)) {
+    return NextResponse.json(
+      { error: "유효한 Id가 필요합니다" },
+      { status: 400 },
+    );
   }
+  const numberId = parseInt(id, 10);
 
-  await db.delete(TIL.Table).where(eq(TIL.Table.id, id));
+  await db.delete(TIL.Table).where(eq(TIL.Table.id, numberId));
   return NextResponse.json({ message: "TIL이 삭제되었습니다" });
 }

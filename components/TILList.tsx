@@ -8,7 +8,7 @@ import type { TILItemType } from "@/types/til";
 import { useState } from "react";
 import { useDebounce } from "react-use";
 
-const DEBOUNCE_DELAY = 500; // milliseconds
+const DEBOUNCE_DELAY = 500; // 500ms
 
 export default function TILList() {
   const [tils, setTils] = useState<TILItemType[]>([]);
