@@ -11,7 +11,6 @@ export default function AuthButton() {
     return (
       <Button variant="ghost" size="sm" disabled>
         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-        로딩 중
       </Button>
     );
   }

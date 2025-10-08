@@ -8,7 +8,6 @@ import type { APIRoute } from "@/types/route";
 import { useDebounce } from "@uidotdev/usehooks";
 import { Loader2 } from "lucide-react";
 import { useMemo, useState } from "react";
-import { toast } from "sonner";
 import useSWR from "swr";
 
 const DEBOUNCE_DELAY = 500; // 500ms
@@ -22,7 +21,6 @@ export default function MyTILPage() {
   const swrKey = useMemo(() => {
     // 검색어는 3글자 이상일 때만 검색
     if (trimmedSearch.length <= 2) {
-      toast.error("검색어는 최소 3글자 이상이어야 합니다.");
       return null;
     }
 

@@ -1,11 +1,11 @@
 import AppHeader from "@/app/_components/AppHeader";
 import { Toaster } from "@/components/ui/sonner";
-import AuthProvider from "@/provider/AuthProvider";
 import SWRProvider from "@/provider/SWRProvider";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import type { PropsWithChildren } from "react";
 import "./globals.css";
+import AuthProvider from "@/provider/AuthProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,12 +28,12 @@ export default function RootLayout({ children }: Readonly<PropsWithChildren>) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} min-h-screen antialiased`}
       >
-        <AuthProvider>
-          <SWRProvider>
+        <SWRProvider>
+          <AuthProvider>
             <AppHeader />
             <main>{children}</main>
-          </SWRProvider>
-        </AuthProvider>
+          </AuthProvider>
+        </SWRProvider>
         <Toaster />
       </body>
     </html>
