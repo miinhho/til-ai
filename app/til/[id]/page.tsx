@@ -1,23 +1,29 @@
 "use client";
 
-import TILEditor from "@/components/TILEditor";
+import TILEditor from "@/components/til/TILEditor";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { TILItemType } from "@/types/til";
+import { useUserSession } from "@/hooks/useUserSession";
+import { SERVICE_DOWN_PATH } from "@/lib/constants/error-page";
+import type { APIRoute } from "@/types/route";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { notFound, useParams, useRouter } from "next/navigation";
 import useSWR from "swr";
 
 export default function TILDetailPage() {
   const { id } = useParams();
+  const router = useRouter();
+  const { status } = useUserSession();
   const {
     data: til,
     error,
     isLoading,
-  } = useSWR<TILItemType>(`/api/tils/${id}`);
+  } = useSWR<APIRoute<"/api/tils/[id]", "GET">>(
+    status === "authenticated" ? `/api/tils/${id}` : null,
+  );
 
-  if (isLoading) {
+  if (status === "loading" || isLoading) {
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="container mx-auto p-4 max-w-4xl">
@@ -30,23 +36,9 @@ export default function TILDetailPage() {
     );
   }
 
-  if (error || !til) {
-    return (
-      <div className="min-h-screen bg-gray-50">
-        <div className="container mx-auto p-4 max-w-4xl">
-          <Card>
-            <CardContent className="pt-6">
-              <p className="text-red-500 mb-4">
-                Error: {error || "TIL not found"}
-              </p>
-              <Button asChild>
-                <Link href="/tils">Back to TILs</Link>
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
+  if (!til) notFound();
+  if (error) {
+    router.push(SERVICE_DOWN_PATH);
   }
 
   const createdAt = new Date(til.createdAt).toLocaleDateString();
@@ -55,7 +47,7 @@ export default function TILDetailPage() {
       <div className="container mx-auto p-4 max-w-4xl">
         <div className="mb-4">
           <Button variant="ghost" asChild>
-            <Link href="/tils">← Back to TILs</Link>
+            <Link href="/til">← Back to TILs</Link>
           </Button>
         </div>
         <Card>

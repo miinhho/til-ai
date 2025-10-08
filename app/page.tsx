@@ -1,4 +1,3 @@
-import TILList from "@/components/TILList";
 import {
   Card,
   CardDescription,
@@ -18,7 +17,6 @@ export default function Home() {
             </CardDescription>
           </CardHeader>
         </Card>
-        <TILList />
       </div>
     </div>
   );

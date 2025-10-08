@@ -1,9 +1,4 @@
-import "dotenv/config";
-import { drizzle } from "drizzle-orm/node-postgres";
+import { drizzle } from "drizzle-orm/postgres-js";
 
-// Pool gives more control, but for simplicity we can just drizzle to handle connections
-export const db = drizzle({
-  connection: {
-    connectionString: process.env.DATABASE_URL,
-  },
-});
+// biome-ignore lint/style/noNonNullAssertion: We are sure that this variable will be defined
+export const db = drizzle(process.env.DATABASE_URL!);

@@ -1,4 +1,6 @@
+import AppHeader from "@/app/_components/AppHeader";
 import { Toaster } from "@/components/ui/sonner";
+import AuthProvider from "@/provider/AuthProvider";
 import SWRProvider from "@/provider/SWRProvider";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
@@ -22,11 +24,16 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<PropsWithChildren>) {
   return (
-    <html lang="en">
+    <html lang="ko">
       <body
         className={`${geistSans.variable} ${geistMono.variable} min-h-screen antialiased`}
       >
-        <SWRProvider>{children}</SWRProvider>
+        <AuthProvider>
+          <SWRProvider>
+            <AppHeader />
+            <main>{children}</main>
+          </SWRProvider>
+        </AuthProvider>
         <Toaster />
       </body>
     </html>
